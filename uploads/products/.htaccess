@@ -1,0 +1,14 @@
+# Allow image files
+<Files ~ "\.(jpg|jpeg|png|gif|webp)$">
+    Order allow,deny
+    Allow from all
+</Files>
+
+# Deny PHP files for security
+<Files ~ "\.php$">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Prevent directory browsing
+Options -Indexes
