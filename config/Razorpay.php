@@ -2,8 +2,8 @@
 
 class RazorpayConfig {
     // Test Mode Credentials (Replace with your actual test credentials)
-    const TEST_KEY_ID = 'rzp_test_1DP5mmOlF5G5ag';
-    const TEST_KEY_SECRET = 'thisissecretkey';
+    const TEST_KEY_ID = 'rzp_test_RVQbH1AONwR4nQ';
+    const TEST_KEY_SECRET = 'qRlyfDnrlYABCDPgKA7sGF97';
     
     // Production Mode Credentials (Keep empty for now)
     const LIVE_KEY_ID = '';

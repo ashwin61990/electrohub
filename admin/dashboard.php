@@ -2,7 +2,7 @@
 session_start();
 
 // Check if user is logged in and is admin
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin'])) {
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     header("Location: ../login.php");
     exit();
 }
@@ -68,14 +68,6 @@ $recentProducts = $admin->getAllProducts(5);
                     <i class="fas fa-shopping-cart"></i>
                     <span>Orders</span>
                 </a>
-                <a href="analytics.php" class="nav-item">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Analytics</span>
-                </a>
-                <a href="settings.php" class="nav-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
             </nav>
             
             <div class="sidebar-footer">
@@ -134,27 +126,6 @@ $recentProducts = $admin->getAllProducts(5);
                         </div>
                     </div>
 
-                    <div class="stat-card">
-                        <div class="stat-icon categories">
-                            <i class="fas fa-tags"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3><?php echo number_format($stats['total_categories']); ?></h3>
-                            <p>Categories</p>
-                            <small>Product categories</small>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon stock">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3><?php echo number_format($stats['out_of_stock']); ?></h3>
-                            <p>Out of Stock</p>
-                            <small>Need attention</small>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Quick Actions -->
@@ -164,10 +135,6 @@ $recentProducts = $admin->getAllProducts(5);
                         <a href="products.php?action=add" class="action-card">
                             <i class="fas fa-plus"></i>
                             <span>Add Product</span>
-                        </a>
-                        <a href="categories.php?action=add" class="action-card">
-                            <i class="fas fa-tag"></i>
-                            <span>Add Category</span>
                         </a>
                         <a href="users.php" class="action-card">
                             <i class="fas fa-user-plus"></i>
@@ -249,29 +216,6 @@ $recentProducts = $admin->getAllProducts(5);
                             <?php else: ?>
                                 <p class="empty-state">No products found</p>
                             <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- System Info -->
-                <div class="system-info">
-                    <h2>System Information</h2>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label">PHP Version:</span>
-                            <span class="info-value"><?php echo phpversion(); ?></span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Server Time:</span>
-                            <span class="info-value"><?php echo date('Y-m-d H:i:s'); ?></span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Database:</span>
-                            <span class="info-value">MySQL Connected</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Admin Session:</span>
-                            <span class="info-value">Active</span>
                         </div>
                     </div>
                 </div>

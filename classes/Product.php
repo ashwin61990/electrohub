@@ -99,4 +99,26 @@ class Product {
         $result = $stmt->fetch();
         return $result ? $result['count'] : 0;
     }
+
+    // Get products by category (returns array)
+    public function getProductsByCategory($category) {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE category = :category AND status = 'active' ORDER BY id DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":category", $category);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Search products by name or description
+    public function searchProducts($searchTerm) {
+        $query = "SELECT * FROM " . $this->table_name . " 
+                  WHERE (name LIKE :search OR description LIKE :search) 
+                  AND status = 'active' 
+                  ORDER BY id DESC";
+        $stmt = $this->conn->prepare($query);
+        $searchParam = '%' . $searchTerm . '%';
+        $stmt->bindParam(":search", $searchParam);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

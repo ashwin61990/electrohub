@@ -2,7 +2,7 @@
 session_start();
 
 // Check if user is logged in and is admin
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     header("Location: ../login.php");
     exit();
 }
@@ -20,14 +20,7 @@ $orders = $order->getAllOrders();
 include 'includes/header.php';
 ?>
 
-<div class="admin-container">
-    <div class="admin-header">
-        <h1><i class="fas fa-shopping-bag"></i> Orders Management</h1>
-        <p>Manage customer orders and payments</p>
-    </div>
-
-    <div class="admin-content">
-        <div class="orders-table-container">
+<div class="orders-table-container">
             <div class="table-header">
                 <h2>All Orders</h2>
                 <div class="table-actions">
@@ -121,7 +114,6 @@ include 'includes/header.php';
                 </table>
             </div>
         </div>
-    </div>
 </div>
 
 <!-- Order Details Modal -->

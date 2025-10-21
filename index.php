@@ -143,7 +143,6 @@ if (empty($categories)) {
                             <i class="fas fa-image"></i>
                         </div>
                     <?php endif; ?>
-                    </div>
                     <div class="product-overlay">
                         <button class="overlay-btn"><i class="fas fa-eye"></i> Quick View</button>
                         <button class="overlay-btn"><i class="fas fa-heart"></i> Wishlist</button>
@@ -152,22 +151,6 @@ if (empty($categories)) {
                 <div class="product-info">
                     <span class="product-category"><?php echo htmlspecialchars($prod['category']); ?></span>
                     <h3 class="product-name"><?php echo htmlspecialchars($prod['name']); ?></h3>
-                    <div class="product-rating">
-                        <?php 
-                        $rating = $prod['rating'] ?? 0;
-                        $fullStars = floor($rating);
-                        $halfStar = ($rating - $fullStars) >= 0.5;
-                        for ($i = 0; $i < $fullStars; $i++): ?>
-                            <i class="fas fa-star"></i>
-                        <?php endfor; ?>
-                        <?php if ($halfStar): ?>
-                            <i class="fas fa-star-half-alt"></i>
-                        <?php endif; ?>
-                        <?php for ($i = $fullStars + ($halfStar ? 1 : 0); $i < 5; $i++): ?>
-                            <i class="far fa-star"></i>
-                        <?php endfor; ?>
-                        <span>(<?php echo number_format($rating, 1); ?>)</span>
-                    </div>
                     <div class="product-footer">
                         <span class="product-price">₹<?php echo number_format($prod['price'], 2); ?></span>
                         <button class="btn-add-cart" onclick="addToCart(<?php echo $prod['id']; ?>, '<?php echo htmlspecialchars($prod['name']); ?>', <?php echo $prod['price']; ?>, '<?php echo htmlspecialchars($prod['image']); ?>')">
@@ -426,24 +409,10 @@ if (empty($categories)) {
     line-height: 1.4;
 }
 
-.product-rating {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    margin-bottom: 1rem;
-    color: var(--warning-color);
-}
-
-.product-rating span {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-left: 0.5rem;
-}
-
 .product-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
     margin-top: auto;
 }
 
@@ -457,14 +426,18 @@ if (empty($categories)) {
     background: var(--primary-color);
     color: white;
     border: none;
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1rem;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
+    width: 100%;
+    font-size: 0.95rem;
+    white-space: nowrap;
 }
 
 .btn-add-cart:hover {

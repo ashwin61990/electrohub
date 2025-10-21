@@ -2,7 +2,7 @@
 session_start();
 
 // Check if user is logged in and is admin
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin'])) {
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     header("Location: ../login.php");
     exit();
 }
@@ -64,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'weight' => $_POST['weight'] ?? null,
             'dimensions' => $_POST['dimensions'] ?? '',
             'warranty' => $_POST['warranty'] ?? '',
-            'rating' => $_POST['rating'] ?? 0,
             'featured' => isset($_POST['featured']) ? 1 : 0,
             'status' => $_POST['status'] ?? 'active',
             'meta_title' => $_POST['meta_title'] ?? '',
@@ -92,7 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'weight' => $_POST['weight'] ?? null,
             'dimensions' => $_POST['dimensions'] ?? '',
             'warranty' => $_POST['warranty'] ?? '',
-            'rating' => $_POST['rating'] ?? 0,
             'featured' => isset($_POST['featured']) ? 1 : 0,
             'status' => $_POST['status'] ?? 'active',
             'meta_title' => $_POST['meta_title'] ?? '',
@@ -306,12 +304,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
                                        value="<?php echo htmlspecialchars($editProduct['warranty'] ?? ''); ?>" 
                                        placeholder="e.g., 1 Year">
                             </div>
-                            <div class="form-group">
-                                <label for="rating">Rating</label>
-                                <input type="number" id="rating" name="rating" class="form-control" 
-                                       value="<?php echo $editProduct['rating'] ?? '0'; ?>" 
-                                       step="0.1" min="0" max="5">
-                            </div>
                         </div>
 
                         <div class="form-row">
@@ -320,7 +312,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
                                 <select id="status" name="status" class="form-control">
                                     <option value="active" <?php echo ($editProduct['status'] ?? 'active') == 'active' ? 'selected' : ''; ?>>Active</option>
                                     <option value="inactive" <?php echo ($editProduct['status'] ?? '') == 'inactive' ? 'selected' : ''; ?>>Inactive</option>
-                                    <option value="out_of_stock" <?php echo ($editProduct['status'] ?? '') == 'out_of_stock' ? 'selected' : ''; ?>>Out of Stock</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -618,11 +609,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
         .status-inactive {
             background: rgba(239, 68, 68, 0.2);
             color: var(--admin-danger);
-        }
-
-        .status-out_of_stock {
-            background: rgba(245, 158, 11, 0.2);
-            color: var(--admin-warning);
         }
 
         .pagination {

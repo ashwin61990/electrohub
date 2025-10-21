@@ -29,7 +29,8 @@ body {
     overflow-x: hidden;
 }
 
-.admin-container {
+.admin-container,
+.admin-layout {
     display: flex;
     min-height: 100vh;
 }
@@ -44,6 +45,38 @@ body {
     overflow-y: auto;
     z-index: 1000;
     transition: transform 0.3s ease;
+}
+
+.admin-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-sidebar li {
+    margin: 0;
+}
+
+.admin-sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1.5rem;
+    color: var(--admin-text-muted);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.admin-sidebar a:hover {
+    background: var(--admin-hover);
+    color: var(--admin-text);
+    border-left-color: var(--admin-primary);
+}
+
+.admin-sidebar a i {
+    width: 20px;
+    text-align: center;
 }
 
 .sidebar-header {
@@ -121,7 +154,8 @@ body {
     background: var(--admin-dark);
 }
 
-.admin-header {
+.admin-header,
+.admin-topbar {
     background: var(--admin-card);
     border-bottom: 1px solid var(--admin-border);
     padding: 1rem 2rem;
@@ -131,6 +165,18 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
+}
+
+.topbar-left,
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-content {
+    padding: 2rem;
+    min-height: calc(100vh - 70px);
 }
 
 .header-left {

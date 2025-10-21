@@ -22,7 +22,6 @@
                 <ul>
                     <li><a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                     <li><a href="products.php"><i class="fas fa-box"></i> Products</a></li>
-                    <li><a href="categories.php"><i class="fas fa-tags"></i> Categories</a></li>
                     <li><a href="orders.php"><i class="fas fa-shopping-bag"></i> Orders</a></li>
                     <li><a href="users.php"><i class="fas fa-users"></i> Users</a></li>
                     <li><a href="../index.php"><i class="fas fa-globe"></i> View Site</a></li>

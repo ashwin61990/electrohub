@@ -56,8 +56,7 @@ switch ($action) {
         $orderData = [
             'shipping_address' => [
                 'full_name' => $_POST['shipping_name'] ?? '',
-                'address_line_1' => $_POST['shipping_address1'] ?? '',
-                'address_line_2' => $_POST['shipping_address2'] ?? '',
+                'address' => $_POST['shipping_address1'] ?? '',
                 'city' => $_POST['shipping_city'] ?? '',
                 'state' => $_POST['shipping_state'] ?? '',
                 'postal_code' => $_POST['shipping_postal'] ?? '',
@@ -65,8 +64,7 @@ switch ($action) {
             ],
             'billing_address' => [
                 'full_name' => $_POST['billing_name'] ?? $_POST['shipping_name'] ?? '',
-                'address_line_1' => $_POST['billing_address1'] ?? $_POST['shipping_address1'] ?? '',
-                'address_line_2' => $_POST['billing_address2'] ?? $_POST['shipping_address2'] ?? '',
+                'address' => $_POST['billing_address1'] ?? $_POST['shipping_address1'] ?? '',
                 'city' => $_POST['billing_city'] ?? $_POST['shipping_city'] ?? '',
                 'state' => $_POST['billing_state'] ?? $_POST['shipping_state'] ?? '',
                 'postal_code' => $_POST['billing_postal'] ?? $_POST['shipping_postal'] ?? '',

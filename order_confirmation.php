@@ -113,10 +113,7 @@ $page->renderHeader();
                         ?>
                         <div class="address">
                             <p><strong><?php echo htmlspecialchars($shippingAddress['full_name']); ?></strong></p>
-                            <p><?php echo htmlspecialchars($shippingAddress['address_line_1']); ?></p>
-                            <?php if (!empty($shippingAddress['address_line_2'])): ?>
-                                <p><?php echo htmlspecialchars($shippingAddress['address_line_2']); ?></p>
-                            <?php endif; ?>
+                            <p><?php echo htmlspecialchars($shippingAddress['address'] ?? $shippingAddress['address_line_1'] ?? ''); ?></p>
                             <p><?php echo htmlspecialchars($shippingAddress['city'] . ', ' . $shippingAddress['state'] . ' ' . $shippingAddress['postal_code']); ?></p>
                             <p>Phone: <?php echo htmlspecialchars($shippingAddress['phone']); ?></p>
                         </div>

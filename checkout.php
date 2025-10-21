@@ -39,8 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['place_order'])) {
     $orderData = [
         'shipping_address' => [
             'full_name' => $_POST['shipping_name'] ?? '',
-            'address_line_1' => $_POST['shipping_address1'] ?? '',
-            'address_line_2' => $_POST['shipping_address2'] ?? '',
+            'address' => $_POST['shipping_address1'] ?? '',
             'city' => $_POST['shipping_city'] ?? '',
             'state' => $_POST['shipping_state'] ?? '',
             'postal_code' => $_POST['shipping_postal'] ?? '',
@@ -48,8 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['place_order'])) {
         ],
         'billing_address' => [
             'full_name' => $_POST['billing_name'] ?? '',
-            'address_line_1' => $_POST['billing_address1'] ?? '',
-            'address_line_2' => $_POST['billing_address2'] ?? '',
+            'address' => $_POST['billing_address1'] ?? '',
             'city' => $_POST['billing_city'] ?? '',
             'state' => $_POST['billing_state'] ?? '',
             'postal_code' => $_POST['billing_postal'] ?? '',
@@ -130,15 +128,9 @@ $page->renderHeader();
                         </div>
                         
                         <div class="form-group">
-                            <label for="shipping_address1">Address Line 1 *</label>
+                            <label for="shipping_address1">Address *</label>
                             <input type="text" id="shipping_address1" name="shipping_address1" class="form-control" 
-                                   placeholder="Street address, P.O. box, company name" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="shipping_address2">Address Line 2</label>
-                            <input type="text" id="shipping_address2" name="shipping_address2" class="form-control" 
-                                   placeholder="Apartment, suite, unit, building, floor, etc.">
+                                   placeholder="Street address, apartment, suite, building, floor, etc." required>
                         </div>
                         
                         <div class="form-grid">
@@ -181,13 +173,9 @@ $page->renderHeader();
                             </div>
                             
                             <div class="form-group">
-                                <label for="billing_address1">Address Line 1 *</label>
-                                <input type="text" id="billing_address1" name="billing_address1" class="form-control">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="billing_address2">Address Line 2</label>
-                                <input type="text" id="billing_address2" name="billing_address2" class="form-control">
+                                <label for="billing_address1">Address *</label>
+                                <input type="text" id="billing_address1" name="billing_address1" class="form-control" 
+                                       placeholder="Street address, apartment, suite, building, floor, etc.">
                             </div>
                             
                             <div class="form-grid">
