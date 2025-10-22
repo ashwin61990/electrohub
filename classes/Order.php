@@ -46,7 +46,7 @@ class Order {
                          VALUES (:order_id, :product_id, :quantity, :price, :total)";
             $itemStmt = $this->conn->prepare($itemQuery);
 
-            $stockQuery = "UPDATE products SET stock = stock - :quantity WHERE id = :product_id AND stock >= :quantity";
+            $stockQuery = "UPDATE products SET stock = stock - :quantity WHERE id = :product_id AND stock >= :min_quantity";
             $stockStmt = $this->conn->prepare($stockQuery);
 
             foreach ($cartItems as $item) {
@@ -62,7 +62,8 @@ class Order {
                 // Update stock
                 $stockResult = $stockStmt->execute([
                     ':quantity' => $item['quantity'],
-                    ':product_id' => $item['id']
+                    ':product_id' => $item['id'],
+                    ':min_quantity' => $item['quantity']
                 ]);
 
                 if (!$stockResult || $stockStmt->rowCount() == 0) {
@@ -75,7 +76,8 @@ class Order {
 
         } catch (Exception $e) {
             $this->conn->rollBack();
-            throw $e;
+            error_log("Order creation error: " . $e->getMessage());
+            throw new Exception("Failed to process order: " . $e->getMessage());
         }
     }
 
