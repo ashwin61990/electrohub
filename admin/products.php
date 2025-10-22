@@ -47,13 +47,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
         try {
             // Use absolute path for upload directory
-            $uploadDir = dirname(__DIR__) . '/uploads/products/';
+            // Try different possible locations
+            $possibleDirs = [
+                dirname(__DIR__) . '/uploads/products/',
+                '/tmp/uploads/products/',
+                sys_get_temp_dir() . '/uploads/products/'
+            ];
+            
+            $uploadDir = null;
+            foreach ($possibleDirs as $dir) {
+                $parentDir = dirname($dir);
+                if (is_writable($parentDir) || is_writable($dir)) {
+                    $uploadDir = $dir;
+                    break;
+                }
+            }
+            
+            if (!$uploadDir) {
+                throw new Exception("No writable upload directory found. Please check server permissions.");
+            }
             
             // Create upload directory if it doesn't exist
             if (!file_exists($uploadDir)) {
-                if (!mkdir($uploadDir, 0755, true)) {
-                    throw new Exception("Failed to create upload directory");
+                if (!mkdir($uploadDir, 0775, true)) {
+                    throw new Exception("Failed to create upload directory. Please check server permissions.");
                 }
+                // Try to set proper permissions
+                @chmod($uploadDir, 0775);
             }
             
             // Check if directory is writable
