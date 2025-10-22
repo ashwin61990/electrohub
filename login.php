@@ -1,21 +1,36 @@
 <?php
 session_start();
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+
 // If user is already logged in, redirect to homepage
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
 }
 
-require_once 'config/Database.php';
-require_once 'classes/User.php';
-require_once 'classes/Admin.php';
-require_once 'classes/Page.php';
+try {
+    require_once 'config/Database.php';
+    require_once 'classes/User.php';
+    require_once 'classes/Admin.php';
+    require_once 'classes/Page.php';
 
-$database = new Database();
-$db = $database->getConnection();
-$user = new User($db);
-$page = new Page("Login - ElectroHub", "Login to your account", "login, signin, account");
+    $database = new Database();
+    $db = $database->getConnection();
+    
+    if (!$db) {
+        throw new Exception("Database connection failed");
+    }
+    
+    $user = new User($db);
+    $page = new Page("Login - ElectroHub", "Login to your account", "login, signin, account");
+} catch (Exception $e) {
+    error_log("Login page error: " . $e->getMessage());
+    die("Application error: " . $e->getMessage() . "<br><br>Please check the server configuration.");
+}
 
 $error = '';
 $registration_success = isset($_SESSION['registration_success']);
