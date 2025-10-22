@@ -1,18 +1,33 @@
 <?php
 session_start();
 
+// Enable error reporting for debugging (remove in production)
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+
 // Check if user is logged in and is admin
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     header("Location: ../login.php");
     exit();
 }
 
-require_once '../config/Database.php';
-require_once '../classes/Admin.php';
+try {
+    require_once '../config/Database.php';
+    require_once '../classes/Admin.php';
 
-$database = new Database();
-$db = $database->getConnection();
-$admin = new Admin($db);
+    $database = new Database();
+    $db = $database->getConnection();
+    
+    if (!$db) {
+        throw new Exception("Failed to connect to database");
+    }
+    
+    $admin = new Admin($db);
+} catch (Exception $e) {
+    error_log("Products page error: " . $e->getMessage());
+    die("Application error. Please check the logs or contact support.");
+}
 
 // Verify admin status
 if (!$admin->isAdmin($_SESSION['user_id'])) {
@@ -30,52 +45,92 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Handle image upload
     $imageUrl = $_POST['existing_image'] ?? '';
     if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
-        $uploadDir = '../uploads/products/';
-        
-        // Create upload directory if it doesn't exist
-        if (!file_exists($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
-        
-        $file = $_FILES['image'];
-        $fileExt = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        
-        if (in_array($fileExt, $allowedTypes) && $file['size'] <= 5 * 1024 * 1024) {
+        try {
+            // Use absolute path for upload directory
+            $uploadDir = dirname(__DIR__) . '/uploads/products/';
+            
+            // Create upload directory if it doesn't exist
+            if (!file_exists($uploadDir)) {
+                if (!mkdir($uploadDir, 0755, true)) {
+                    throw new Exception("Failed to create upload directory");
+                }
+            }
+            
+            // Check if directory is writable
+            if (!is_writable($uploadDir)) {
+                throw new Exception("Upload directory is not writable");
+            }
+            
+            $file = $_FILES['image'];
+            $fileExt = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            
+            // Validate file
+            if (!in_array($fileExt, $allowedTypes)) {
+                throw new Exception("Invalid file type. Allowed: " . implode(', ', $allowedTypes));
+            }
+            
+            if ($file['size'] > 5 * 1024 * 1024) {
+                throw new Exception("File size too large. Maximum 5MB allowed.");
+            }
+            
+            // Generate unique filename
             $newFileName = uniqid('product_', true) . '.' . $fileExt;
             $uploadPath = $uploadDir . $newFileName;
             
             if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
                 $imageUrl = 'uploads/products/' . $newFileName;
+            } else {
+                throw new Exception("Failed to upload file");
             }
+        } catch (Exception $e) {
+            $message = 'Image upload failed: ' . $e->getMessage();
+            $messageType = 'error';
+            error_log("Image upload error: " . $e->getMessage());
         }
     }
     
-    if ($action == 'add') {
-        $productData = [
-            'sku' => $_POST['sku'] ?? '',
-            'name' => $_POST['name'] ?? '',
-            'description' => $_POST['description'] ?? '',
-            'price' => $_POST['price'] ?? 0,
-            'image' => $imageUrl,
-            'category' => $_POST['category'] ?? '',
-            'brand' => $_POST['brand'] ?? '',
-            'stock' => $_POST['stock'] ?? 0,
-            'weight' => $_POST['weight'] ?? null,
-            'dimensions' => $_POST['dimensions'] ?? '',
-            'warranty' => $_POST['warranty'] ?? '',
-            'featured' => isset($_POST['featured']) ? 1 : 0,
-            'status' => $_POST['status'] ?? 'active',
-            'meta_title' => $_POST['meta_title'] ?? '',
-            'meta_description' => $_POST['meta_description'] ?? ''
-        ];
-        
-        if ($admin->addProduct($productData)) {
-            $message = 'Product added successfully!';
-            $messageType = 'success';
-        } else {
-            $message = 'Failed to add product. Please try again.';
+    if ($action == 'add' && empty($message)) {
+        try {
+            // Validate required fields
+            if (empty($_POST['name'])) {
+                throw new Exception("Product name is required");
+            }
+            if (empty($_POST['price']) || $_POST['price'] <= 0) {
+                throw new Exception("Valid price is required");
+            }
+            if (empty($_POST['category'])) {
+                throw new Exception("Category is required");
+            }
+            
+            $productData = [
+                'sku' => trim($_POST['sku'] ?? ''),
+                'name' => trim($_POST['name'] ?? ''),
+                'description' => trim($_POST['description'] ?? ''),
+                'price' => floatval($_POST['price'] ?? 0),
+                'image' => $imageUrl,
+                'category' => trim($_POST['category'] ?? ''),
+                'brand' => trim($_POST['brand'] ?? ''),
+                'stock' => intval($_POST['stock'] ?? 0),
+                'weight' => !empty($_POST['weight']) ? floatval($_POST['weight']) : null,
+                'dimensions' => trim($_POST['dimensions'] ?? ''),
+                'warranty' => trim($_POST['warranty'] ?? ''),
+                'featured' => isset($_POST['featured']) ? 1 : 0,
+                'status' => $_POST['status'] ?? 'active',
+                'meta_title' => trim($_POST['meta_title'] ?? ''),
+                'meta_description' => trim($_POST['meta_description'] ?? '')
+            ];
+            
+            if ($admin->addProduct($productData)) {
+                $message = 'Product added successfully!';
+                $messageType = 'success';
+            } else {
+                throw new Exception("Failed to add product to database");
+            }
+        } catch (Exception $e) {
+            $message = 'Failed to add product: ' . $e->getMessage();
             $messageType = 'error';
+            error_log("Add product error: " . $e->getMessage());
         }
     } elseif ($action == 'edit') {
         $productId = $_POST['product_id'] ?? 0;

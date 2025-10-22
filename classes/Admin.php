@@ -122,36 +122,47 @@ class Admin {
     
     // Add new product
     public function addProduct($data) {
-        $query = "INSERT INTO products 
-                  (sku, name, description, price, image, category, brand, stock, weight, dimensions, warranty, rating, featured, status, meta_title, meta_description) 
-                  VALUES 
-                  (:sku, :name, :description, :price, :image, :category, :brand, :stock, :weight, :dimensions, :warranty, :rating, :featured, :status, :meta_title, :meta_description)";
-        
-        $stmt = $this->conn->prepare($query);
-        
-        // Generate SKU if not provided
-        if (empty($data['sku'])) {
-            $data['sku'] = $this->generateSKU();
+        try {
+            $query = "INSERT INTO products 
+                      (sku, name, description, price, image, category, brand, stock, weight, dimensions, warranty, rating, featured, status, meta_title, meta_description) 
+                      VALUES 
+                      (:sku, :name, :description, :price, :image, :category, :brand, :stock, :weight, :dimensions, :warranty, :rating, :featured, :status, :meta_title, :meta_description)";
+            
+            $stmt = $this->conn->prepare($query);
+            
+            // Generate SKU if not provided
+            if (empty($data['sku'])) {
+                $data['sku'] = $this->generateSKU();
+            }
+            
+            $result = $stmt->execute([
+                ':sku' => $data['sku'],
+                ':name' => $data['name'],
+                ':description' => $data['description'],
+                ':price' => $data['price'],
+                ':image' => $data['image'] ?? '',
+                ':category' => $data['category'],
+                ':brand' => $data['brand'] ?? '',
+                ':stock' => $data['stock'] ?? 0,
+                ':weight' => $data['weight'] ?? null,
+                ':dimensions' => $data['dimensions'] ?? '',
+                ':warranty' => $data['warranty'] ?? '',
+                ':rating' => $data['rating'] ?? 0,
+                ':featured' => $data['featured'] ?? 0,
+                ':status' => $data['status'] ?? 'active',
+                ':meta_title' => $data['meta_title'] ?? '',
+                ':meta_description' => $data['meta_description'] ?? ''
+            ]);
+            
+            if (!$result) {
+                error_log("Failed to add product: " . print_r($stmt->errorInfo(), true));
+            }
+            
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Database error in addProduct: " . $e->getMessage());
+            return false;
         }
-        
-        return $stmt->execute([
-            ':sku' => $data['sku'],
-            ':name' => $data['name'],
-            ':description' => $data['description'],
-            ':price' => $data['price'],
-            ':image' => $data['image'] ?? '',
-            ':category' => $data['category'],
-            ':brand' => $data['brand'] ?? '',
-            ':stock' => $data['stock'] ?? 0,
-            ':weight' => $data['weight'] ?? null,
-            ':dimensions' => $data['dimensions'] ?? '',
-            ':warranty' => $data['warranty'] ?? '',
-            ':rating' => $data['rating'] ?? 0,
-            ':featured' => $data['featured'] ?? 0,
-            ':status' => $data['status'] ?? 'active',
-            ':meta_title' => $data['meta_title'] ?? '',
-            ':meta_description' => $data['meta_description'] ?? ''
-        ]);
     }
     
     // Update product
