@@ -137,7 +137,12 @@ if (empty($categories)) {
                 <?php endif; ?>
                 <div class="product-image">
                     <?php if (!empty($prod['image'])): ?>
-                        <img src="<?php echo htmlspecialchars($prod['image']); ?>" alt="<?php echo htmlspecialchars($prod['name']); ?>">
+                        <img src="<?php echo htmlspecialchars($prod['image']); ?>" alt="<?php echo htmlspecialchars($prod['name']); ?>"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div style="display:none; padding: 20px; background: #f0f0f0; text-align: center; color: #666;">
+                            <i class="fas fa-image" style="font-size: 2em;"></i><br>
+                            Image not available
+                        </div>
                     <?php else: ?>
                         <div class="placeholder-image">
                             <i class="fas fa-image"></i>

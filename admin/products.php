@@ -415,8 +415,12 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
                                     <?php if ($editProduct && !empty($editProduct['image'])): ?>
                                         <div class="current-image">
                                             <label>Current Image:</label>
-                                            <img src="../<?php echo htmlspecialchars($editProduct['image']); ?>" 
-                                                 alt="Current product image" class="current-image-preview">
+                                            <img src="<?php echo '../' . htmlspecialchars($editProduct['image']); ?>" 
+                                                 alt="Current product image" class="current-image-preview"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                            <div style="display:none; padding: 10px; background: #f0f0f0; text-align: center;">
+                                                Image not found: <?php echo htmlspecialchars($editProduct['image']); ?>
+                                            </div>
                                         </div>
                                     <?php endif; ?>
                                     <div id="imagePreview" class="image-preview" style="display: none;">
@@ -498,9 +502,13 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
                                         <td>
                                             <div class="product-image-cell">
                                                 <?php if (!empty($product['image'])): ?>
-                                                    <img src="../<?php echo htmlspecialchars($product['image']); ?>" 
+                                                    <img src="<?php echo '../' . htmlspecialchars($product['image']); ?>" 
                                                          alt="<?php echo htmlspecialchars($product['name']); ?>" 
-                                                         class="table-product-image">
+                                                         class="table-product-image"
+                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                                    <div style="display:none; font-size: 10px; color: #666;">
+                                                        Missing: <?php echo htmlspecialchars($product['image']); ?>
+                                                    </div>
                                                 <?php else: ?>
                                                     <div class="no-image">
                                                         <i class="fas fa-image"></i>
