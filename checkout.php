@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+// Suppress errors for production
+error_reporting(E_ERROR | E_PARSE);
+ini_set('display_errors', 0);
+
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php?redirect=checkout.php");
