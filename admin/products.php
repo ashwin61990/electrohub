@@ -47,24 +47,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
         try {
             // Use absolute path for upload directory
-            // Try different possible locations
+            // Try different possible locations with more aggressive checking
             $possibleDirs = [
                 dirname(__DIR__) . '/uploads/products/',
+                $_SERVER['DOCUMENT_ROOT'] . '/uploads/products/',
+                '/var/www/html/uploads/products/',
                 '/tmp/uploads/products/',
-                sys_get_temp_dir() . '/uploads/products/'
+                sys_get_temp_dir() . '/uploads/products/',
+                __DIR__ . '/../uploads/products/'
             ];
             
             $uploadDir = null;
+            $debugInfo = [];
+            
             foreach ($possibleDirs as $dir) {
                 $parentDir = dirname($dir);
-                if (is_writable($parentDir) || is_writable($dir)) {
+                $debugInfo[] = "Checking: $dir (parent: $parentDir)";
+                
+                // Try to create parent directory first
+                if (!file_exists($parentDir)) {
+                    @mkdir($parentDir, 0755, true);
+                }
+                
+                // Check if we can write to parent or directory itself
+                if (is_writable($parentDir) || (file_exists($dir) && is_writable($dir))) {
                     $uploadDir = $dir;
+                    $debugInfo[] = "Selected: $dir";
                     break;
                 }
             }
             
             if (!$uploadDir) {
-                throw new Exception("No writable upload directory found. Please check server permissions.");
+                error_log("Upload directory debug: " . implode(" | ", $debugInfo));
+                throw new Exception("No writable upload directory found. Debug info logged. Please check server permissions or contact administrator.");
             }
             
             // Create upload directory if it doesn't exist
